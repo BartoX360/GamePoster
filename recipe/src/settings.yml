@@ -1,0 +1,53 @@
+---
+name: GamePoster
+strategy: polling
+polling_verb: get
+polling_url: "https://game-ratings-api.slowtech.workers.dev/feed?platforms={{ platforms | join: ',' | url_encode }}"
+polling_headers: ''
+refresh_interval: 60
+no_screen_padding: 'yes'
+dark_mode: 'no'
+static_data: ''
+custom_fields:
+- keyname: about
+  field_type: author_bio
+  name: GamePoster
+  description: "This year's best-rated games, fresh releases and what's coming next, drawn as a poster. Ratings: OpenCritic, via the Game Watch feed by Martin Rapavý. / Les jeux les mieux notés de l'année, les sorties récentes et à venir, façon affiche."
+- keyname: platforms
+  field_type: select
+  name: Platforms / Plateformes
+  description: Games available on any of the selected platforms. Leave blank for all platforms.
+  help_text: Hold <kbd>Ctrl</kbd> (Windows) or <kbd>Command</kbd> (Mac) to select several platforms.
+  optional: true
+  multiple: true
+  options:
+  - PlayStation 5: ps5
+  - Xbox Series X/S: xbxs
+  - Nintendo Switch 2: switch2
+  - Nintendo Switch: switch
+  - PC: pc
+- keyname: featured
+  field_type: select
+  name: Poster / Affiche
+  description: Which game gets the poster. Rotate changes every hour between the top games, the latest releases and the next ones.
+  options:
+  - Rotate / Rotation: rotate
+  - Hall of Fame: hall
+  - Just released / Juste sortis: recent
+  - Coming next / Bientôt: upcoming
+  default: rotate
+- keyname: language
+  field_type: select
+  name: Language / Langue
+  options:
+  - English: en
+  - Français: fr
+  default: en
+- keyname: style
+  field_type: select
+  name: Style
+  description: E-ink for black & white screens (TRMNL), Color for LCD screens.
+  options:
+  - E-ink: eink
+  - Color / Couleur: color
+  default: eink

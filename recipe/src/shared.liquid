@@ -1,0 +1,327 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=IBM+Plex+Mono:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+  .view:has(> .gp) { position: relative; padding: 0; overflow: hidden; }
+  .gp { position: absolute; inset: 0; overflow: hidden; container-type: size;
+        --bg: #f2eee6; --ink: #111111; --muted: #444455; --sky: #ccddee; --ray: #dde8f3; --top: #444455;
+        --accent: #dd2233; --on-accent: #ffffff; --pad-fill: #ffffff;
+        --sky-h: 64%; --pad: 4.4cqw; --f-top: max(11px, 1.35cqw); --f-meta: max(12px, 1.45cqw);
+        --f-title: 6.2cqw; --f-sub: max(12px, 1.5cqw); --stamp: min(10.5cqw, 17cqh); --shadow: max(6px, .8cqw);
+        background: var(--bg); color: var(--ink); font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  /* une couleur de ciel par rubrique : soleil, ciel clair, crépuscule */
+  .gp--sec-hall { --sky: #ffcc44; --ray: #ffcc88; --top: #442233; }
+  .gp--sec-recent { --sky: #ccddee; --ray: #e6e9ee; --top: #444455; }
+  .gp--sec-upcoming { --sky: #ee9977; --ray: #ffbf80; --top: #442233; }
+  .gp.gp--eink { --bg: #ffffff; --ink: #000000; --muted: #000000; --sky: #ffffff; --ray: url(#gp-dots); --top: #000000;
+                 --accent: #000000; --on-accent: #ffffff; }
+
+  .gp-sky { position: absolute; left: 0; right: 0; top: 0; height: var(--sky-h); background: var(--sky); overflow: hidden; }
+  .gp-rays { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .gp-art { position: absolute; left: 8%; right: 8%; top: 17%; bottom: 10%; display: flex; align-items: center; justify-content: center; }
+  .gp-frame { position: relative; flex: 0 0 auto; border: max(3px, .3cqw) solid var(--ink); background: var(--ink);
+              box-shadow: var(--shadow) var(--shadow) 0 var(--ink); visibility: hidden; }
+  .gp-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .gp--eink .gp-frame img { filter: grayscale(1) contrast(1.15); }
+  .gp--img .gp-frame { visibility: visible; }
+  .gp-pad { display: none; width: 72%; height: 92%; }
+  .gp--noimg .gp-frame { display: none; }
+  .gp--noimg .gp-pad { display: block; }
+  .gp-tag { position: absolute; left: calc(-1 * var(--shadow)); top: calc(-1.4 * var(--shadow)); padding: .25em .6em;
+            background: var(--ink); color: var(--bg); font-size: var(--f-top); letter-spacing: .2em; text-transform: uppercase;
+            white-space: nowrap; }
+  .gp-tag:empty { display: none; }
+  .gp-top { position: absolute; top: calc(var(--pad) * .6); left: var(--pad); right: var(--pad); display: flex;
+            justify-content: space-between; gap: 2em; font-size: var(--f-top); letter-spacing: .28em;
+            text-transform: uppercase; color: var(--top); white-space: nowrap; }
+  .gp-top > span:first-child { overflow: hidden; text-overflow: ellipsis; }
+  /* les libellés restent lisibles par-dessus les rayons */
+  .gp-top > span { background: var(--sky); padding: .25em .5em; margin: -.25em -.5em; }
+  .gp-upd-short { display: none; }
+  .gp--half_horizontal .gp-upd-long, .gp--half_vertical .gp-upd-long, .gp--quadrant .gp-upd-long { display: none; }
+  .gp--half_horizontal .gp-upd-short, .gp--half_vertical .gp-upd-short, .gp--quadrant .gp-upd-short { display: inline; }
+
+  .gp-info { position: absolute; left: var(--pad); right: var(--pad); top: var(--sky-h); bottom: 0;
+             border-top: max(2px, .25cqw) solid var(--ink); display: flex; align-items: center; gap: 3cqw; }
+  .gp-text { flex: 1 1 auto; min-width: 0; }
+  .gp-meta { font-size: var(--f-meta); letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gp-title { font-family: 'Archivo', 'Arial Black', sans-serif; font-weight: 900; font-size: var(--f-title);
+              line-height: 1.05; text-transform: uppercase; margin: .18em 0 .14em; white-space: nowrap; overflow: hidden; }
+  .gp-title.wrap { white-space: normal; line-height: 1.02; overflow-wrap: anywhere; }
+  .gp-sub { font-size: var(--f-sub); color: var(--muted); letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gp-sub b { color: var(--ink); font-weight: 500; }
+  .gp-next { margin-top: .45em; }
+  .gp-stamp { flex: 0 0 auto; text-align: center; font-size: var(--f-top); letter-spacing: .2em; color: var(--muted);
+              text-transform: uppercase; white-space: nowrap; }
+  .gp-ring { display: flex; align-items: center; justify-content: center; width: var(--stamp); height: var(--stamp);
+             margin: .45em auto; border-radius: 50%; background: var(--accent); color: var(--on-accent);
+             transform: rotate(-8deg); font-family: 'Archivo', 'Arial Black', sans-serif; font-weight: 900;
+             font-size: calc(var(--stamp) * .44); letter-spacing: -.02em; line-height: 1; }
+  .gp-ring.long { font-size: calc(var(--stamp) * .3); }
+  .gp-ring.word { font-size: calc(var(--stamp) * .2); letter-spacing: .02em; text-transform: uppercase; }
+  .gp-ring.none { background: transparent; color: var(--ink); border: max(3px, .3cqw) solid var(--ink); }
+  .gp-err .gp-meta { color: var(--accent); }
+  .gp--error .gp-stamp, .gp--error .gp-next, .gp--error .gp-tag { display: none; }
+  /* e-ink 1 bit : pas d'anticrénelage, il faut des traits plus épais */
+  .gp--eink { font-weight: 600; --f-top: max(13px, 1.35cqw); --f-meta: max(13px, 1.45cqw); --f-sub: max(13px, 1.5cqw); }
+  .gp--eink .gp-sub b { font-weight: 600; }
+  .gp--eink .gp-top, .gp--eink .gp-meta { letter-spacing: .14em; }
+
+  .gp--half_horizontal { --pad: 3cqw; --f-title: 4.6cqw; --stamp: 30cqh; }
+  .gp--half_horizontal .gp-sky { right: auto; width: 34%; height: 100%; border-right: max(2px, .25cqw) solid var(--ink); }
+  .gp--half_horizontal .gp-art { left: 9%; right: 11%; top: 22%; bottom: 13%; }
+  .gp--half_horizontal .gp-info { left: calc(34% + var(--pad)); top: 0; border-top: 0; }
+  .gp--half_horizontal .gp-top > span:first-child, .gp--half_vertical .gp-top > span:first-child,
+  .gp--quadrant .gp-top > span:first-child { display: none; }
+  .gp--half_horizontal .gp-top, .gp--half_vertical .gp-top, .gp--quadrant .gp-top { justify-content: flex-end; letter-spacing: .1em; }
+  .gp--half_horizontal .gp-next, .gp--quadrant .gp-next { display: none; }
+  .gp--half_vertical { --sky-h: 42%; --pad: 5cqw; --f-top: max(11px, 2.6cqw); --f-meta: max(11px, 2.9cqw);
+                       --f-title: 9cqw; --f-sub: max(12px, 3.2cqw); --stamp: 19cqw; }
+  .gp--half_vertical .gp-art { left: 6%; right: 8%; top: 17%; bottom: 12%; }
+  .gp--half_vertical .gp-meta, .gp--half_vertical .gp-sub { white-space: normal; line-height: 1.5; }
+  .gp--half_vertical .gp-info { align-items: flex-start; padding-top: 7cqw; }
+  .gp--quadrant { --sky-h: 46%; --pad: 4.5cqw; --f-top: max(11px, 2.8cqw); --f-meta: max(11px, 2.8cqw);
+                  --f-title: 7.5cqw; --f-sub: max(11px, 2.8cqw); --stamp: 15cqw; }
+  .gp--quadrant .gp-art { left: 4%; right: 6%; top: 17%; bottom: 9%; }
+  /* petits formats : le tampon chevauche le bas de l'affiche */
+  .gp--half_vertical .gp-stamp, .gp--quadrant .gp-stamp { position: absolute; right: 0; top: calc(var(--stamp) * -.62); }
+  .gp--half_vertical .gp-stamp > span, .gp--quadrant .gp-stamp > span { display: none; }
+  .gp--half_vertical .gp-text, .gp--quadrant .gp-text { padding-right: calc(var(--stamp) * .55); }
+  .gp--half_vertical .gp-meta, .gp--quadrant .gp-meta { margin-right: calc(var(--stamp) * .5); }
+</style>
+
+{% template gameposter %}
+<div class="gp gp--{{ size }}{% if cf.style == 'color' %} gp--color{% else %} gp--eink{% endif %}"
+     data-lang="{{ cf.language | default: 'en' }}" data-featured="{{ cf.featured | default: 'rotate' }}"
+     data-platforms="{{ cf.platforms | join: ',' }}" data-year="{{ year }}" data-stale="{{ stale }}" data-status="{{ status }}"
+     data-ts="{{ ts }}" data-off="{{ off | default: 0 }}">
+  <script type="application/json" class="gp-hall">{{ hall | json }}</script>
+  <script type="application/json" class="gp-recent">{{ recent | json }}</script>
+  <script type="application/json" class="gp-upcoming">{{ upcoming | json }}</script>
+  <div class="gp-sky">
+    <svg class="gp-rays" viewBox="0 0 1280 540" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="gp-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+          <rect width="16" height="16" fill="#fff"/>
+          <circle cx="4" cy="4" r="1.6" fill="#000"/><circle cx="12" cy="12" r="1.6" fill="#000"/>
+        </pattern>
+      </defs>
+      <g class="gp-rays-g" style="fill:var(--ray)"></g>
+    </svg>
+    <!-- la jaquette, cernée de noir comme l'avion de FlightPoster ; une manette si elle manque -->
+    <div class="gp-art">
+      <div class="gp-frame"><img class="gp-cover" alt=""><span class="gp-tag"></span></div>
+      <svg class="gp-pad" viewBox="-30 0 520 340" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <path d="M120 40 H330 C392 40 424 80 440 140 L466 244 C478 296 446 326 410 304 L354 254 H96 L40 304 C4 326 -28 296 -16 244 L10 140 C26 80 58 40 120 40 Z"
+              style="fill:var(--pad-fill);stroke:var(--ink)" stroke-width="10" stroke-linejoin="round"/>
+        <path d="M86 112 H118 V140 H146 V172 H118 V200 H86 V172 H58 V140 H86 Z" style="fill:var(--ink)"/>
+        <g style="fill:var(--accent)"><circle cx="340" cy="112" r="17"/><circle cx="376" cy="148" r="17"/>
+          <circle cx="304" cy="148" r="17"/><circle cx="340" cy="184" r="17"/></g>
+      </svg>
+    </div>
+    <div class="gp-top">
+      <span class="gp-k"></span>
+      <span class="gp-upd"><span class="gp-upd-long"></span><span class="gp-upd-short"></span><span class="gp-time">--:--</span></span>
+    </div>
+  </div>
+  <div class="gp-info">
+    <div class="gp-text">
+      <div class="gp-meta"></div>
+      <div class="gp-title"></div>
+      <div class="gp-sub gp-plat"></div>
+      <div class="gp-sub gp-next"></div>
+    </div>
+    <div class="gp-stamp">
+      <span class="gp-stamp-k"></span>
+      <div class="gp-ring"></div>
+      <span class="gp-stamp-l"></span>
+    </div>
+  </div>
+</div>
+{% endtemplate %}
+
+<script>
+(function () {
+  var PLATFORMS = { ps5: 'PS5', xbxs: 'Xbox Series', switch2: 'Switch 2', switch: 'Switch', pc: 'PC' };
+  var I18N = {
+    fr: {
+      hall: 'Hall of Fame ', recent: 'Juste sortis', upcoming: 'Bientôt',
+      updated: 'Dernière actualisation à ', upd: 'Màj ', stale: 'Données anciennes · ',
+      days: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+      months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+      mshort: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+      date: function (d, m, n) { return d + ' ' + (n === 1 ? '1er' : n) + ' ' + m; },
+      dshort: function (m, n) { return n + ' ' + m; },
+      rank: function (n, y) { return 'Nº ' + n + ' du Hall of Fame ' + y; },
+      released: function (d) { return 'sorti le ' + d; },
+      ago: function (n) { return n === 0 ? 'Sorti aujourd\'hui' : n === 1 ? 'Sorti hier' : 'Sorti il y a ' + n + ' jours'; },
+      out: function (n) { return n === 0 ? 'Sort aujourd\'hui' : n === 1 ? 'Sort demain' : 'Sort dans ' + n + ' jours'; },
+      on: 'Sur ', then: 'Ensuite : ', also: 'Aussi : ', tagNew: 'Nouveau',
+      score: 'Note', critic: 'OpenCritic', unrated: 'Pas encore noté', outIn: 'Sortie', day: 'jour', daysW: 'jours', today: 'Auj.',
+      emptyMeta: 'Rien à afficher', offlineMeta: 'Classement indisponible', offline: 'Hors ligne', noFeed: 'Impossible de joindre le flux Game Watch pour le moment.',
+      empty: 'Aucun jeu', emptyTxt: 'Aucun jeu ne correspond aux plateformes choisies.'
+    },
+    en: {
+      hall: 'Hall of Fame ', recent: 'Just released', upcoming: 'Coming next',
+      updated: 'Last updated at ', upd: 'Upd. ', stale: 'Stale data · ',
+      days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      mshort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      date: function (d, m, n) { return d + ', ' + m + ' ' + n; },
+      dshort: function (m, n) { return m + ' ' + n; },
+      rank: function (n, y) { return 'No. ' + n + ' of ' + y; },
+      released: function (d) { return 'released ' + d; },
+      ago: function (n) { return n === 0 ? 'Released today' : n === 1 ? 'Released yesterday' : 'Released ' + n + ' days ago'; },
+      out: function (n) { return n === 0 ? 'Out today' : n === 1 ? 'Out tomorrow' : 'Out in ' + n + ' days'; },
+      on: 'On ', then: 'Next: ', also: 'Also: ', tagNew: 'New',
+      score: 'Score', critic: 'OpenCritic', unrated: 'Not rated yet', outIn: 'Out in', day: 'day', daysW: 'days', today: 'Today',
+      emptyMeta: 'Nothing to show', offlineMeta: 'Ranking unavailable', offline: 'Offline', noFeed: 'Unable to reach the Game Watch feed right now.',
+      empty: 'No games', emptyTxt: 'No game matches the selected platforms.'
+    }
+  };
+
+  function json(el) { try { return JSON.parse(el.textContent); } catch (e) { return null; } }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  // Titre : d'abord réduit sur une ligne, puis sur deux lignes s'il est encore trop long
+  function fit(el) {
+    el.style.fontSize = ''; el.classList.remove('wrap');
+    var base = parseFloat(getComputedStyle(el).fontSize), size = base;
+    var shrink = function () { size *= 0.94; el.style.fontSize = size + 'px'; };
+    while (el.scrollWidth > el.clientWidth + 1 && size > base * 0.7) shrink();
+    if (el.scrollWidth <= el.clientWidth + 1) return;
+    el.classList.add('wrap');
+    while ((el.scrollHeight > size * 2.1 + 2 || el.scrollWidth > el.clientWidth + 1) && size > base * 0.3) shrink();
+  }
+
+  function render(root) {
+    root.setAttribute('data-done', '1');
+    var q = function (s) { return root.querySelector(s); };
+    var lang = root.dataset.lang === 'fr' ? 'fr' : 'en', t = I18N[lang];
+    var ts = parseInt(root.dataset.ts, 10) || Math.floor(Date.now() / 1000), off = parseInt(root.dataset.off, 10) || 0;
+    var mine = (root.dataset.platforms || '').split(',').filter(Boolean);
+    var lists = { hall: json(q('.gp-hall')) || [], recent: json(q('.gp-recent')) || [], upcoming: json(q('.gp-upcoming')) || [] };
+
+    var stale = root.dataset.stale === 'true';
+    q('.gp-upd-long').textContent = (stale ? t.stale : '') + t.updated;
+    q('.gp-upd-short').textContent = t.upd;
+    q('.gp-time').textContent = new Date((ts + off) * 1000).toISOString().substr(11, 5);
+
+    // Jours entiers entre aujourd'hui (heure locale) et la date de sortie
+    var today = Math.floor((ts + off) / 86400);
+    var dayOf = function (g) { return g.release_date ? Math.floor(Date.parse(g.release_date.substr(0, 10) + 'T00:00:00Z') / 864e5) : null; };
+    var when = function (g, long) {
+      var d = dayOf(g); if (d == null) return g.date_label || '';
+      var dt = new Date(d * 864e5);
+      return long ? t.date(t.days[dt.getUTCDay()], t.months[dt.getUTCMonth()], dt.getUTCDate())
+                  : t.dshort(t.mshort[dt.getUTCMonth()], dt.getUTCDate());
+    };
+
+    // Rubrique et jeu à l'affiche : fixés par le réglage, ou une rotation horaire parmi les trois premiers de chaque rubrique
+    var secs = ['hall', 'recent', 'upcoming'].filter(function (s) { return lists[s].length; });
+    var sec = root.dataset.featured, idx = 0, slot = Math.floor(ts / 3600);
+    if (!lists[sec] || !lists[sec].length) {
+      sec = secs[slot % (secs.length || 1)];
+      if (sec) idx = Math.floor(slot / secs.length) % Math.min(3, lists[sec].length);
+    }
+    root.classList.add('gp--sec-' + (sec || 'hall'));
+    rays(root);
+    q('.gp-k').textContent = sec === 'recent' ? t.recent : sec === 'upcoming' ? t.upcoming : t.hall + (root.dataset.year || '');
+
+    if (!sec) {
+      var down = root.dataset.status && root.dataset.status !== 'ok' || !root.dataset.year;
+      root.classList.add('gp--error', 'gp--noimg');
+      q('.gp-k').textContent = 'GamePoster';
+      q('.gp-meta').textContent = down ? t.offlineMeta : t.emptyMeta;
+      q('.gp-title').textContent = down ? t.offline : t.empty;
+      q('.gp-plat').textContent = down ? t.noFeed : t.emptyTxt;
+      q('.gp-info').classList.add('gp-err');
+      return fit(q('.gp-title'));
+    }
+
+    var list = lists[sec], g = list[idx], left = today - dayOf(g);
+    cover(root, g.cover_url || g.banner_url);
+    q('.gp-title').textContent = g.title || '—';
+
+    var meta;
+    if (sec === 'hall') {
+      meta = t.rank(idx + 1, root.dataset.year) + ' · ' + t.released(when(g, false));
+      q('.gp-tag').textContent = 'Nº ' + (idx + 1);
+    } else if (sec === 'recent') {
+      meta = t.ago(Math.max(0, left)) + ' · ' + when(g, true);
+      if (left <= 7) q('.gp-tag').textContent = t.tagNew;
+    } else meta = t.out(Math.max(0, -left)) + ' · ' + when(g, true);
+    q('.gp-meta').textContent = meta;
+
+    var plats = (g.platforms || []).filter(function (p) { return PLATFORMS[p]; }).map(function (p) {
+      return !mine.length || mine.indexOf(p) >= 0 ? '<b>' + PLATFORMS[p] + '</b>' : PLATFORMS[p];
+    });
+    q('.gp-plat').innerHTML = plats.length ? t.on + plats.join(' · ') : '';
+
+    var others = [];
+    list.forEach(function (o, i) {
+      if (i === idx || others.length >= 4) return;
+      var name = esc(o.title || '—');
+      if (sec === 'hall') others.push((i + 1) + '. ' + name + ' <b>' + esc(o.score_label) + '</b>');
+      else if (sec === 'recent') others.push(name + ' <b>' + esc(o.score_label) + '</b>');
+      else others.push(name + ' <b>' + when(o, false) + '</b>');
+    });
+    q('.gp-next').innerHTML = others.length ? (sec === 'recent' || idx ? t.also : t.then) + others.join(' · ') : '';
+
+    // Tampon : la note OpenCritic, ou le compte à rebours avant la sortie
+    var ring = q('.gp-ring');
+    if (sec === 'upcoming') {
+      var n = Math.max(0, -left);
+      q('.gp-stamp-k').textContent = t.outIn;
+      ring.textContent = n === 0 ? t.today : n;
+      if (n === 0) ring.classList.add('word'); else if (n > 99) ring.classList.add('long');
+      q('.gp-stamp-l').textContent = n === 0 ? '' : n === 1 ? t.day : t.daysW;
+    } else if (g.score == null) {
+      q('.gp-stamp-k').textContent = t.score;
+      ring.textContent = '—'; ring.classList.add('none');
+      q('.gp-stamp-l').textContent = t.unrated;
+    } else {
+      q('.gp-stamp-k').textContent = t.score;
+      ring.textContent = g.score_label;
+      if (String(g.score_label).length > 2) ring.classList.add('long');
+      q('.gp-stamp-l').textContent = t.critic;
+    }
+    fit(q('.gp-title'));
+  }
+
+  // Jaquette cadrée à son format d'origine dans la zone de l'affiche
+  function cover(root, url) {
+    var img = root.querySelector('.gp-cover'), frame = root.querySelector('.gp-frame'), art = root.querySelector('.gp-art');
+    if (!url) return root.classList.add('gp--noimg');
+    var place = function () {
+      var w = img.naturalWidth, h = img.naturalHeight;
+      if (!w || !h) return root.classList.add('gp--noimg');
+      var k = Math.min(art.clientWidth / w, art.clientHeight / h);
+      frame.style.width = Math.round(w * k) + 'px'; frame.style.height = Math.round(h * k) + 'px';
+      root.classList.add('gp--img');
+    };
+    img.onload = place;
+    img.onerror = function () { root.classList.add('gp--noimg'); };
+    img.src = url;
+    if (img.complete && img.naturalWidth) place();
+  }
+
+  // Rayons de soleil derrière la jaquette, façon affiche
+  function rays(root) {
+    var NS = 'http://www.w3.org/2000/svg', g = root.querySelector('.gp-rays-g'), cx = 640, cy = 300, n = 18, r = 1600;
+    for (var i = 0; i < n; i++) {
+      var a0 = (i * 2) * Math.PI / n, a1 = (i * 2 + 1) * Math.PI / n;
+      var p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', 'M' + cx + ' ' + cy + ' L' + (cx + r * Math.cos(a0)) + ' ' + (cy + r * Math.sin(a0))
+        + ' L' + (cx + r * Math.cos(a1)) + ' ' + (cy + r * Math.sin(a1)) + ' Z');
+      g.appendChild(p);
+    }
+  }
+
+  function boot() { document.querySelectorAll('.gp:not([data-done])').forEach(render); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () {
+    document.querySelectorAll('.gp-title').forEach(fit);
+  });
+})();
+</script>
