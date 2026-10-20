@@ -70,7 +70,6 @@ The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp
 
 - The screen is built with JavaScript at render time, so the renderer must run JavaScript.
 - Cover art is loaded from OpenCritic at render time; on e-ink it is turned to grayscale and dithered by the renderer.
-- In LaraPaper, the half and quadrant layouts render blank on the color (Echo Show) screen model, for every Poster plugin: they are tested on e-ink only.
 - The feed is updated a few times a day: a refresh interval of 60 minutes keeps the rotation going without loading it needlessly.
 
 ---
@@ -125,5 +124,4 @@ Aucun serveur à installer : les données viennent du flux du plugin [Game Watch
 
 - L'écran est construit en JavaScript au moment du rendu : le moteur de rendu doit exécuter le JavaScript.
 - Les jaquettes sont chargées depuis OpenCritic au moment du rendu ; en e-ink, elles passent en niveaux de gris, tramés par le moteur de rendu.
-- Dans LaraPaper, les formats demi et quart d'écran sortent blancs sur le modèle d'écran couleur (Echo Show), pour tous les plugins Poster : ils ne sont testés qu'en e-ink.
 - Le flux est mis à jour quelques fois par jour : un rafraîchissement toutes les 60 minutes suffit à faire tourner l'affiche.

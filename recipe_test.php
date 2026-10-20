@@ -17,7 +17,6 @@ $noimg = $feed; $noimg['upcoming'][0]['cover_url'] = null; $noimg['upcoming'][0]
 $empty = ['year' => 2026, 'status' => 'ok', 'stale' => false, 'hall' => [], 'recent' => [], 'upcoming' => []];
 // heure UTC du 18/10 dont le créneau horaire vaut $k modulo 9 (rotation : rubrique = k % 3, rang = k / 3)
 $slot = fn($k) => (int) collect(range(0, 23))->first(fn($h) => intdiv(Carbon::create(2026, 10, 19, $h, 0, 0, 'UTC')->timestamp, 3600) % 9 == $k);
-// les formats réduits ne sont rendus qu'en e-ink : le mashup de l'écran couleur sort blanc dans LaraPaper (WeatherPoster aussi)
 $cases = [
   // nom, taille, modèle, style, langue, affiche, données, heure (UTC)
   ['fr_color_hall', 'full', 55, 'color', 'fr', 'hall', $feed, 10],
