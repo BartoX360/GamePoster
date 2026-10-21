@@ -12,7 +12,8 @@ custom_fields:
 - keyname: about
   field_type: author_bio
   name: GamePoster
-  description: "This year's best-rated games, fresh releases and what's coming next, drawn as a poster. Ratings: OpenCritic, via the Game Watch feed by Martin Rapavý. / Les jeux les mieux notés de l'année, les sorties récentes et à venir, façon affiche."
+  description: "This year's best-rated games, fresh releases and what's coming next, drawn as a poster. Ratings: OpenCritic, via the Game Watch feed by Martin Rapavý. / Les jeux les mieux notés de l'année, les sorties récentes et à venir, façon affiche. v1.0.0"
+  github_url: https://github.com/BartoX360/GamePoster
 - keyname: platforms
   field_type: select
   name: Platforms / Plateformes

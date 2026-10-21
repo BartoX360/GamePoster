@@ -10,7 +10,7 @@
 
 *What to play next, drawn as a poster.*
 
-A TRMNL plugin that puts one game on a poster: this year's best-rated games, the latest releases or the next ones, with its cover art, its OpenCritic score or a countdown to its release. It is part of the Poster suite with [FlightPoster](http://192.168.1.109:3000/Anthony/FlightPoster) and [WeatherPoster](http://192.168.1.109:3000/Anthony/WeatherPoster), and shares their look.
+A TRMNL plugin that puts one game on a poster: this year's best-rated games, the latest releases or the next ones, with its cover art, its OpenCritic score or a countdown to its release. It is part of the Poster suite with [FlightPoster](https://github.com/BartoX360/FlightPoster), [WeatherPoster](https://github.com/BartoX360/WeatherPoster), [MoviePoster](https://github.com/BartoX360/MoviePoster), [ShowPoster](https://github.com/BartoX360/ShowPoster) and [BookPoster](https://github.com/BartoX360/BookPoster)and shares their look.
 
 No server to install: the data comes from the feed of the [Game Watch](https://www.rapavy.cz/) plugin by Martin Rapavý, with ratings from [OpenCritic](https://opencritic.com).
 
@@ -45,7 +45,7 @@ No server to install: the data comes from the feed of the [Game Watch](https://w
 
 The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp) layout.
 
-**LaraPaper / BYOS**: *Plugins → Import recipe*, pick `recipe/gameposter.zip` (built by `recipe_render.sh`, or zip the contents of `recipe/src/`), then fill in your settings.
+**LaraPaper / BYOS**: *Plugins → Import recipe*, pick `gameposter-x.y.z.zip` from the [latest release](https://github.com/BartoX360/GamePoster/releases/latest) (or zip the contents of `recipe/src/`), then fill in your settings.
 
 ### Settings
 
@@ -60,11 +60,13 @@ The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp
 
 | File | Purpose |
 |---|---|
-| `recipe_render.sh <folder>` | Zips the recipe, imports it into LaraPaper as "GamePoster (test)", renders every test case and copies the PNGs into `<folder>` |
-| `recipe_test.php` | The test cases (section, rotation, layout, device, language, missing cover, errors) run inside LaraPaper |
-| `test_payload.json` | A frozen Game Watch feed (October 19, 2026) used by the test cases |
-| `update.php` | Copies the code of "GamePoster (test)" into the installed plugin, keeping its settings |
-| `install.php` | First install: imports the recipe as "GamePoster" with Game Watch's platforms |
+| `dev/recipe_render.sh <folder>` | Zips the recipe, imports it into LaraPaper as "GamePoster (test)", renders every test case and copies the PNGs into `<folder>` |
+| `dev/recipe_test.php` | The test cases (section, rotation, layout, device, language, missing cover, errors) run inside LaraPaper |
+| `dev/test_payload.json` | A frozen Game Watch feed (October 19, 2026) used by the test cases |
+| `dev/update.php` | Copies the code of "GamePoster (test)" into the installed plugin, keeping its settings |
+| `dev/install.php` | First install: imports the recipe as "GamePoster" with Game Watch's platforms |
+
+The scripts target a LaraPaper server running in Docker (container `larapaper-app-1`) over SSH, set with `LARAPAPER_SSH` (e.g. `root@my-server`) in the environment or in `dev/.env` (ignored by git).
 
 ### Notes
 
@@ -78,7 +80,7 @@ The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp
 
 *À quoi jouer ensuite, façon affiche.*
 
-Un plugin TRMNL qui met un jeu à l'affiche : les jeux les mieux notés de l'année, les dernières sorties ou les prochaines, avec sa jaquette, sa note OpenCritic ou un compte à rebours avant sa sortie. Il fait partie de la suite Poster avec [FlightPoster](http://192.168.1.109:3000/Anthony/FlightPoster) et [WeatherPoster](http://192.168.1.109:3000/Anthony/WeatherPoster), dont il reprend le style.
+Un plugin TRMNL qui met un jeu à l'affiche : les jeux les mieux notés de l'année, les dernières sorties ou les prochaines, avec sa jaquette, sa note OpenCritic ou un compte à rebours avant sa sortie. Il fait partie de la suite Poster avec [FlightPoster](https://github.com/BartoX360/FlightPoster), [WeatherPoster](https://github.com/BartoX360/WeatherPoster), [MoviePoster](https://github.com/BartoX360/MoviePoster), [ShowPoster](https://github.com/BartoX360/ShowPoster) et [BookPoster](https://github.com/BartoX360/BookPoster)dont il reprend le style.
 
 Aucun serveur à installer : les données viennent du flux du plugin [Game Watch](https://www.rapavy.cz/) de Martin Rapavý, avec les notes d'[OpenCritic](https://opencritic.com).
 
@@ -109,7 +111,7 @@ Aucun serveur à installer : les données viennent du flux du plugin [Game Watch
 - les `custom_fields` de `recipe/src/settings.yml` dans *Custom fields* (YAML) ;
 - `recipe/src/shared.liquid` dans *Shared markup*, et chaque `recipe/src/<format>.liquid` dans l'onglet correspondant.
 
-**LaraPaper / BYOS** : *Plugins → Import recipe*, choisissez `recipe/gameposter.zip` (créé par `recipe_render.sh`, ou zippez le contenu de `recipe/src/`), puis remplissez les réglages.
+**LaraPaper / BYOS** : *Plugins → Import recipe*, choisissez `gameposter-x.y.z.zip` dans la [dernière release](https://github.com/BartoX360/GamePoster/releases/latest) (ou zippez le contenu de `recipe/src/`), puis remplissez les réglages.
 
 ### Réglages
 
@@ -125,3 +127,9 @@ Aucun serveur à installer : les données viennent du flux du plugin [Game Watch
 - L'écran est construit en JavaScript au moment du rendu : le moteur de rendu doit exécuter le JavaScript.
 - Les jaquettes sont chargées depuis OpenCritic au moment du rendu ; en e-ink, elles passent en niveaux de gris, tramés par le moteur de rendu.
 - Le flux est mis à jour quelques fois par jour : un rafraîchissement toutes les 60 minutes suffit à faire tourner l'affiche.
+
+---
+
+## Licence / License
+
+Code sous licence [MIT](LICENSE). Les données affichées appartiennent à leurs sources respectives. / Code released under the [MIT](LICENSE) license. The data shown belongs to its respective sources.
